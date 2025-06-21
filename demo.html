@@ -6,11 +6,32 @@
     <title>Document</title>
 </head>
 <body>
-    <form action="http://localhost:8080/sum" method="get">
+    <input type="text" id="msg">
+    <input type="button" value="send" onclick="send()">
+    <div id="chat">
+
+    </div>
+    <script>
+        const socket = new WebSocket("ws://localhost:8080")
+        socket.onopen=()=>
+    {
+        console.log("server connected")
+    }
+    socket.onmessage = (e)=>
+    {
+        document.getElementById("chat").innerHTML+= `<p>${event.data}</p>`
+    }
+    function  send()
+    {
+        const msg = document.getElementById("msg").value;
+        socket.send(msg)
+    }
+    </script>
+    <!-- <form action="http://localhost:8080/sum" method="get">
         <input type="text" name="txta" placeholder="a">
         <input type="text" name="txtb" placeholder="b">
         <input type="submit" value="+">
-    </form>
+    </form> -->
     
 </body>
 </html>

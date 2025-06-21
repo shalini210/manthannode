@@ -1,22 +1,12 @@
 const express = require("express")
 const app = express()
-
+const userRouter = require("./routers/userRouter")
+app.use(express.json())
+app.use(express.urlencoded({extended:true}))
 app.get("/",(req,res)=>
 {
-    res.sendFile(__dirname+ "/home.html")
-    // res.send("THis is home ")
+    res.send("use /user for user and /admin for admin")
 })
-app.get("/add/:a/:b",(req,res)=>
-{
-    console.log(req.params);
-    res.send("this is for add")
-})
-app.get("/about",(req,res)=>
-{
-    res.send("THis is about")
-})
-app.get("/contact",(req,res)=>
-{
-    res.send("THis is contact")
-})
+app.use("/user",userRouter)
+
 app.listen(8080,()=>console.log("express server running"))

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Chat</title>
+    <script>
+        var cname = ""
+    </script>
+</head>
+<body onload="cname=prompt('enter your name ');chat()">
+    <input type="text" id="to" placeholder="Recipient ID"><br>
+    <input type="text" id="message" placeholder="Enter message"><br>
+    <button onclick="sendMessage()">Send</button>
+    <div id="chat"></div>
+
+    <script>
+        var  ws
+        function chat()
+        {
+        ws = new WebSocket(`ws://localhost:8080/?name=${cname}`);}
+        let clientID;
+       
+        ws.onopen = () => {
+            // ws.send("raman") 
+             ws.send({name:"raman"})
+            console.log('Connected to WebSocket server');
+        };
+
+        ws.onmessage = event => {
+            const data = JSON.parse(event.data);
+            if(data.id){
+                clientID = data.id
+                console.log('Your ID: ' + clientID);
+            } else if(data.from && data.text){
+                document.getElementById('chat').innerHTML += `<p><b>${data.from}:</b> ${data.text}</p>`;
+            } else if(data.error){
+                document.getElementById('chat').innerHTML += `<p style="color:red;">${data.error}</p>`;
+            }
+        };
+
+        ws.onclose = () => {
+            console.log('Disconnected from WebSocket server');
+        };
+
+        function sendMessage() {
+            const to = document.getElementById('to').value;
+            const message = document.getElementById('message').value;
+            document.getElementById('chat').innerHTML += `<p><b>${clientID }:</b> ${message}</p>`;
+            ws.send(JSON.stringify({to: to, text: message}));
+            document.getElementById('message').value = '';
+
+        }
+    </script>
+</body>
+</html>
